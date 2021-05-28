@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import MoviesList from "./components/MoviesList";
 import "./App.css";
@@ -30,7 +30,7 @@ function App() {
   // }
 
   // or
-  async function fetchMoviesHandler() {
+  const fetchMoviesHandler = useCallback(async () => {
     // change the state when starting loading the data
     setIsLoading(true);
     setError(null);
@@ -63,7 +63,20 @@ function App() {
 
     // change the state again after loaded the data
     setIsLoading(false);
-  }
+  }, []);
+
+  useEffect(() => {
+    fetchMoviesHandler();
+    // since the fetchMoviesHandler never change (since it does not have other dependencies)
+    // so, fetchMoviesHandler will only be called once when component first mounted
+    // *** IMPORTANT ***
+    // however, since in JS, object !== object
+    // that means every time when state (movies) change,
+    // fetchMoviesHandler will be different from the previous one
+    // that means fetchMoviesHandler will get called over and over again
+    // to fix that, we need to use `useCallback` for fetchMoviesHandler function
+    // so that, React can store the function somewhere and use it the same function instead creating new one (again, new function will be different in memory)
+  }, [fetchMoviesHandler]);
 
   let content = <p>Found no movies.</p>;
 
