@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 
 import MoviesList from "./components/MoviesList";
+import AddMovie from "./components/AddMovie";
 import "./App.css";
 
 function App() {
@@ -78,6 +79,18 @@ function App() {
     // so that, React can store the function somewhere and use it the same function instead creating new one (again, new function will be different in memory)
   }, [fetchMoviesHandler]);
 
+  // this method is not going to work with valid url here.
+  async function addMovieHandler(movie) {
+    const response = await fetch("url_goes_here", {
+      method: "POST",
+      body: JSON.stringify(movie),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
+
+  // print content
   let content = <p>Found no movies.</p>;
 
   if (movies.length > 0) {
@@ -94,6 +107,9 @@ function App() {
 
   return (
     <React.Fragment>
+      <section>
+        <AddMovie onAddMovie={addMovieHandler} />
+      </section>
       <section>
         <button onClick={fetchMoviesHandler}>Fetch Movies</button>
       </section>
